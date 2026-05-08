@@ -1,0 +1,881 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Photo to Parable · Mary Kay</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,300;9..144,400;9..144,500;9..144,600;9..144,700&family=Manrope:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+<style>
+  /* ── Design system tokens (kept in sync with index.html) ─────────────────── */
+  :root {
+    --cream: #F5F2EC;
+    --paper: #FBFAF6;
+    --ink: #1A1A1A;
+    --slate: #4A4A4A;
+    --whisper: #8A8A8A;
+    --hairline: #E6E1D7;
+    --border: #D4CCBC;
+    --rose: #E1306C;
+    --rose-deep: #B91D54;
+    --rose-pale: #FCE7EE;
+    --navy: #1F3864;
+    --navy-deep: #142849;
+    --navy-pale: #E8ECF5;
+    --emerald: #2F855A;
+    --amber: #C05621;
+    --crimson: #C53030;
+    --gold: #B7791F;
+    --shadow-sm: 0 1px 2px rgba(26,26,26,0.04), 0 1px 3px rgba(26,26,26,0.06);
+    --shadow-md: 0 4px 6px -1px rgba(26,26,26,0.05), 0 2px 4px -2px rgba(26,26,26,0.04);
+    --shadow-lg: 0 10px 25px -5px rgba(26,26,26,0.08), 0 8px 10px -6px rgba(26,26,26,0.04);
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body {
+    font-family: 'Manrope', -apple-system, BlinkMacSystemFont, sans-serif;
+    background: var(--cream);
+    color: var(--ink);
+    font-size: 15px;
+    line-height: 1.55;
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+    min-height: 100vh;
+  }
+  h1, h2, h3, h4, .serif {
+    font-family: 'Fraunces', Georgia, serif;
+    font-weight: 500;
+    letter-spacing: -0.015em;
+    line-height: 1.15;
+  }
+  .display { font-family: 'Fraunces', Georgia, serif; font-weight: 400; letter-spacing: -0.025em; }
+
+  /* ── Header ──────────────────────────────────────────────────────────────── */
+  header.app-header {
+    position: sticky; top: 0; z-index: 50;
+    background: rgba(245, 242, 236, 0.92);
+    backdrop-filter: blur(8px);
+    border-bottom: 1px solid var(--hairline);
+  }
+  .header-inner {
+    max-width: 1280px; margin: 0 auto;
+    padding: 18px 32px;
+    display: flex; align-items: center; justify-content: space-between;
+  }
+  .brand {
+    display: flex; align-items: baseline; gap: 14px;
+    font-family: 'Fraunces', Georgia, serif;
+    font-weight: 500; font-size: 19px; letter-spacing: -0.01em;
+    text-decoration: none; color: inherit;
+  }
+  .brand .mark {
+    width: 28px; height: 28px;
+    background: var(--rose);
+    border-radius: 50%; display: inline-block;
+    position: relative; flex-shrink: 0;
+  }
+  .brand .mark::after {
+    content: ''; position: absolute; inset: 6px;
+    border-radius: 50%; background: var(--cream);
+  }
+  .brand-text { font-style: italic; font-weight: 400; }
+  .brand-divider { color: var(--whisper); font-style: normal; font-weight: 300; margin: 0 6px; }
+  nav.app-nav { display: flex; gap: 24px; align-items: center; }
+  .nav-link {
+    background: none; border: none;
+    font-family: inherit; font-size: 14px; font-weight: 500;
+    color: var(--slate); cursor: pointer;
+    padding: 8px 0; position: relative;
+    transition: color 200ms;
+    text-decoration: none;
+  }
+  .nav-link:hover { color: var(--ink); }
+  .nav-link.active { color: var(--ink); }
+  .nav-link.active::after {
+    content: ''; position: absolute;
+    bottom: -2px; left: 0; right: 0; height: 1px;
+    background: var(--rose);
+  }
+
+  /* ── Layout ──────────────────────────────────────────────────────────────── */
+  main { max-width: 860px; margin: 0 auto; padding: 48px 32px 80px; }
+  .stack { display: flex; flex-direction: column; gap: 16px; }
+  .stack-lg { display: flex; flex-direction: column; gap: 32px; }
+  .row { display: flex; gap: 16px; align-items: center; }
+  .row-between { display: flex; justify-content: space-between; align-items: center; }
+  .spacer { flex: 1; }
+
+  /* ── Cards ───────────────────────────────────────────────────────────────── */
+  .card {
+    background: var(--paper);
+    border: 1px solid var(--hairline);
+    border-radius: 10px;
+    padding: 28px;
+  }
+  .card-elevated {
+    background: var(--paper);
+    border: 1px solid var(--hairline);
+    border-radius: 12px;
+    padding: 32px;
+    box-shadow: var(--shadow-sm);
+  }
+
+  /* ── Typography utilities ─────────────────────────────────────────────────── */
+  .eyebrow {
+    text-transform: uppercase;
+    letter-spacing: 0.16em;
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--whisper);
+  }
+  .small { font-size: 13px; color: var(--slate); }
+  .micro { font-size: 12px; color: var(--whisper); }
+  .strong { color: var(--ink); font-weight: 600; }
+
+  /* ── Buttons ─────────────────────────────────────────────────────────────── */
+  button.btn {
+    font-family: inherit; cursor: pointer;
+    padding: 12px 22px; border-radius: 6px;
+    font-size: 14px; font-weight: 600; letter-spacing: 0.01em;
+    border: 1px solid transparent;
+    transition: all 180ms;
+  }
+  button.btn:disabled {
+    opacity: 0.45;
+    cursor: not-allowed;
+    pointer-events: none;
+  }
+  .btn-primary {
+    background: var(--ink); color: var(--paper); border-color: var(--ink);
+  }
+  .btn-primary:hover { background: var(--navy-deep); border-color: var(--navy-deep); }
+  .btn-rose {
+    background: var(--rose); color: white; border-color: var(--rose);
+  }
+  .btn-rose:hover { background: var(--rose-deep); border-color: var(--rose-deep); }
+  .btn-outline {
+    background: transparent; color: var(--ink); border-color: var(--border);
+  }
+  .btn-outline:hover { background: var(--paper); border-color: var(--ink); }
+  .btn-ghost {
+    background: transparent; color: var(--slate); border: none;
+    padding: 10px 14px;
+  }
+  .btn-ghost:hover { color: var(--ink); }
+  .btn-large { padding: 16px 32px; font-size: 15px; }
+  .btn-success {
+    background: var(--emerald); color: white; border-color: var(--emerald);
+  }
+
+  /* ── Inputs ──────────────────────────────────────────────────────────────── */
+  label.field {
+    display: flex; flex-direction: column; gap: 6px;
+    font-size: 13px; font-weight: 600; color: var(--slate);
+  }
+  label.field .help { font-weight: 400; color: var(--whisper); font-size: 12px; }
+  textarea.txt {
+    font-family: inherit; font-size: 14px;
+    padding: 10px 14px;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    background: var(--paper);
+    color: var(--ink);
+    transition: border 150ms, box-shadow 150ms;
+    resize: vertical;
+    line-height: 1.5;
+  }
+  textarea.txt:focus {
+    outline: none;
+    border-color: var(--ink);
+    box-shadow: 0 0 0 3px rgba(26,26,26,0.06);
+  }
+
+  /* ── Hero ────────────────────────────────────────────────────────────────── */
+  .hero {
+    padding: 64px 0 52px;
+    border-bottom: 1px solid var(--hairline);
+    margin-bottom: 48px;
+  }
+  .hero-eyebrow { color: var(--rose); margin-bottom: 14px; }
+  .hero h1 {
+    font-size: clamp(36px, 5vw, 58px);
+    font-weight: 300;
+    letter-spacing: -0.03em;
+    margin-bottom: 18px;
+    max-width: 640px;
+  }
+  .hero h1 em { font-style: italic; color: var(--rose); font-weight: 400; }
+  .hero p {
+    max-width: 520px;
+    color: var(--slate);
+    font-size: 16px;
+    line-height: 1.6;
+  }
+
+  /* ── Upload zone ─────────────────────────────────────────────────────────── */
+  .upload-zone {
+    border: 2px dashed var(--border);
+    border-radius: 10px;
+    padding: 40px 24px;
+    display: flex; flex-direction: column;
+    align-items: center; gap: 10px;
+    background: var(--cream);
+    transition: border-color 150ms, background 150ms;
+    cursor: pointer;
+    text-align: center;
+  }
+  .upload-zone:hover,
+  .upload-zone:focus-within {
+    border-color: var(--slate);
+    background: #F0EDE6;
+  }
+  .upload-zone.drag-active {
+    border-color: var(--rose);
+    background: var(--rose-pale);
+  }
+  .upload-icon {
+    font-size: 36px;
+    line-height: 1;
+    margin-bottom: 4px;
+    pointer-events: none;
+  }
+  .upload-hint {
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--ink);
+    pointer-events: none;
+  }
+  .upload-limits {
+    font-size: 12px;
+    color: var(--whisper);
+    pointer-events: none;
+  }
+
+  /* ── File list ───────────────────────────────────────────────────────────── */
+  .file-list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-top: 20px;
+  }
+  .file-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px 12px;
+    background: var(--cream);
+    border: 1px solid var(--hairline);
+    border-radius: 8px;
+  }
+  .file-thumb {
+    width: 48px;
+    height: 48px;
+    object-fit: cover;
+    border-radius: 4px;
+    flex-shrink: 0;
+    border: 1px solid var(--hairline);
+    background: var(--paper);
+  }
+  .file-meta {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    min-width: 0;
+  }
+  .file-name {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--ink);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .file-size {
+    font-size: 12px;
+    color: var(--whisper);
+  }
+  .file-order {
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--rose);
+    letter-spacing: 0.05em;
+    flex-shrink: 0;
+    width: 22px;
+    text-align: center;
+  }
+  .remove-btn {
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: var(--whisper);
+    font-size: 16px;
+    padding: 4px 8px;
+    border-radius: 4px;
+    transition: color 150ms, background 150ms;
+    line-height: 1;
+    flex-shrink: 0;
+  }
+  .remove-btn:hover { color: var(--crimson); background: #FBE5E5; }
+  .add-more-row {
+    margin-top: 10px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .file-count-badge {
+    font-size: 12px;
+    color: var(--whisper);
+  }
+
+  /* ── Alerts ──────────────────────────────────────────────────────────────── */
+  .alert {
+    padding: 14px 18px;
+    border-radius: 8px;
+    font-size: 13px;
+    line-height: 1.5;
+  }
+  .alert-error {
+    background: #FBE5E5;
+    border: 1px solid #F5C0C0;
+    color: var(--crimson);
+  }
+  .alert-warning {
+    background: #FBF3E0;
+    border: 1px solid #F0D78A;
+    color: #7A5200;
+  }
+  .alert ul { margin-top: 6px; padding-left: 18px; }
+  .alert li { margin-top: 4px; }
+
+  /* ── Loading spinner ─────────────────────────────────────────────────────── */
+  @keyframes spin { to { transform: rotate(360deg); } }
+  .spinner {
+    width: 16px; height: 16px;
+    border: 2px solid rgba(255,255,255,0.35);
+    border-top-color: white;
+    border-radius: 50%;
+    animation: spin 0.65s linear infinite;
+    display: inline-block;
+    flex-shrink: 0;
+  }
+
+  /* ── Output section ──────────────────────────────────────────────────────── */
+  .output-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 16px;
+    margin-bottom: 8px;
+    flex-wrap: wrap;
+  }
+  .output-textarea {
+    font-family: 'Courier New', Courier, monospace;
+    font-size: 13px;
+    line-height: 1.65;
+    min-height: 420px;
+    width: 100%;
+    resize: vertical;
+  }
+
+  /* ── Divider ─────────────────────────────────────────────────────────────── */
+  .divider {
+    border: none;
+    border-top: 1px solid var(--hairline);
+    margin: 28px 0;
+  }
+
+  /* ── Responsive ──────────────────────────────────────────────────────────── */
+  @media (max-width: 880px) {
+    main { padding: 32px 20px 60px; }
+    .header-inner { padding: 16px 20px; }
+    nav.app-nav { gap: 16px; }
+    .hero { padding: 48px 0 40px; }
+    .card-elevated { padding: 24px 20px; }
+    .output-header { flex-direction: column; align-items: stretch; }
+  }
+  @media (max-width: 560px) {
+    .btn-large { padding: 14px 20px; font-size: 14px; }
+    .upload-zone { padding: 28px 16px; }
+  }
+</style>
+</head>
+<body>
+<div id="root"></div>
+<script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+<script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+<script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+<script type="text/babel">
+const { useState, useRef, useEffect, useCallback } = React;
+
+// ── Constants ─────────────────────────────────────────────────────────────────
+const MAX_FILES = 5;
+const MAX_SIZE = 10 * 1024 * 1024;
+const ALLOWED_TYPES = ['image/jpeg', 'image/png', 'image/webp'];
+const ALLOWED_EXTS = '.jpg,.jpeg,.png,.webp';
+
+// ── Utilities ─────────────────────────────────────────────────────────────────
+function uid() {
+  return 'f_' + Date.now().toString(36) + Math.random().toString(36).substr(2, 5);
+}
+
+function formatSize(bytes) {
+  if (bytes < 1024) return bytes + ' B';
+  if (bytes < 1048576) return (bytes / 1024).toFixed(1) + ' KB';
+  return (bytes / 1048576).toFixed(1) + ' MB';
+}
+
+// ── Main component ────────────────────────────────────────────────────────────
+function PhotoParableConverter() {
+  const [files, setFiles] = useState([]);
+  const [context, setContext] = useState('');
+  const [loading, setLoading] = useState(false);
+  const [clientErrors, setClientErrors] = useState([]);
+  const [serverError, setServerError] = useState(null);
+  const [instructions, setInstructions] = useState('');
+  const [warnings, setWarnings] = useState([]);
+  const [generated, setGenerated] = useState(false);
+  const [copied, setCopied] = useState(false);
+  const [dragActive, setDragActive] = useState(false);
+
+  const fileInputRef = useRef(null);
+  const addMoreInputRef = useRef(null);
+  const dragCounterRef = useRef(0);
+  const filesRef = useRef([]);
+  filesRef.current = files; // always current for cleanup on unmount
+
+  // Revoke all object URLs when the component unmounts.
+  useEffect(() => {
+    return () => {
+      filesRef.current.forEach((f) => URL.revokeObjectURL(f.previewUrl));
+    };
+  }, []);
+
+  // ── File validation and addition ─────────────────────────────────────────
+  const addFiles = useCallback((fileList) => {
+    const current = filesRef.current;
+    const available = MAX_FILES - current.length;
+    const errors = [];
+    const newEntries = [];
+
+    if (available <= 0) {
+      setClientErrors([`Maximum ${MAX_FILES} files reached. Remove a file to add more.`]);
+      return;
+    }
+
+    Array.from(fileList).forEach((file) => {
+      if (newEntries.length >= available) {
+        if (!errors.some((e) => e.includes('maximum'))) {
+          errors.push(`Only ${available} more file${available !== 1 ? 's' : ''} can be added. Some were skipped.`);
+        }
+        return;
+      }
+      if (!ALLOWED_TYPES.includes(file.type)) {
+        errors.push(`"${file.name}": unsupported type. Use JPEG, PNG, or WebP.`);
+        return;
+      }
+      if (file.size > MAX_SIZE) {
+        errors.push(`"${file.name}" (${formatSize(file.size)}) exceeds the 10 MB limit.`);
+        return;
+      }
+      newEntries.push({
+        id: uid(),
+        file,
+        previewUrl: URL.createObjectURL(file),
+        name: file.name,
+        size: file.size,
+        sizeStr: formatSize(file.size),
+      });
+    });
+
+    setClientErrors(errors);
+    if (newEntries.length > 0) {
+      setFiles((prev) => [...prev, ...newEntries]);
+      setGenerated(false);
+      setServerError(null);
+    }
+  }, []);
+
+  const removeFile = useCallback((id) => {
+    setFiles((prev) => {
+      const target = prev.find((f) => f.id === id);
+      if (target) URL.revokeObjectURL(target.previewUrl);
+      return prev.filter((f) => f.id !== id);
+    });
+    setClientErrors([]);
+    setGenerated(false);
+    setServerError(null);
+  }, []);
+
+  // ── Drag & drop ──────────────────────────────────────────────────────────
+  const handleDragEnter = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    dragCounterRef.current += 1;
+    setDragActive(true);
+  };
+
+  const handleDragLeave = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    dragCounterRef.current -= 1;
+    if (dragCounterRef.current === 0) setDragActive(false);
+  };
+
+  const handleDragOver = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+  };
+
+  const handleDrop = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    dragCounterRef.current = 0;
+    setDragActive(false);
+    const dropped = e.dataTransfer?.files;
+    if (dropped && dropped.length > 0) addFiles(dropped);
+  };
+
+  const handleFileInput = (e) => {
+    if (e.target.files && e.target.files.length > 0) {
+      addFiles(e.target.files);
+    }
+    // Reset input so the same file can be re-selected after removal.
+    e.target.value = '';
+  };
+
+  const openFilePicker = () => fileInputRef.current?.click();
+  const openAddMorePicker = () => addMoreInputRef.current?.click();
+
+  // ── Generate ─────────────────────────────────────────────────────────────
+  const handleGenerate = async () => {
+    if (files.length === 0 || loading) return;
+
+    setLoading(true);
+    setServerError(null);
+    setClientErrors([]);
+
+    try {
+      const formData = new FormData();
+      files.forEach((f) => formData.append('files', f.file));
+      if (context.trim()) formData.append('context', context.trim());
+
+      const response = await fetch('/api/generate-parable-instructions', {
+        method: 'POST',
+        body: formData,
+      });
+
+      let data;
+      try {
+        data = await response.json();
+      } catch {
+        throw new Error('Server returned an unreadable response. Check that the server is running.');
+      }
+
+      if (!response.ok || !data.success) {
+        setServerError(data.error || 'An unexpected error occurred. Please try again.');
+        return;
+      }
+
+      setInstructions(data.instructions || '');
+      setWarnings(data.warnings || []);
+      setGenerated(true);
+    } catch (err) {
+      if (err instanceof TypeError && err.message.includes('fetch')) {
+        setServerError(
+          'Cannot reach the server. Make sure you started the server with "npm start" ' +
+          'and are accessing this page at http://localhost:3000/photo-converter.html.'
+        );
+      } else {
+        setServerError(err.message || 'An unexpected error occurred.');
+      }
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // ── Copy ─────────────────────────────────────────────────────────────────
+  const handleCopy = async () => {
+    if (!instructions) return;
+    try {
+      await navigator.clipboard.writeText(instructions);
+    } catch {
+      // Fallback for browsers without Clipboard API permission.
+      const ta = document.querySelector('.output-textarea');
+      if (ta) {
+        ta.select();
+        document.execCommand('copy');
+      }
+    }
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2500);
+  };
+
+  // ── Reset ─────────────────────────────────────────────────────────────────
+  const handleReset = () => {
+    filesRef.current.forEach((f) => URL.revokeObjectURL(f.previewUrl));
+    setFiles([]);
+    setContext('');
+    setInstructions('');
+    setWarnings([]);
+    setGenerated(false);
+    setServerError(null);
+    setClientErrors([]);
+    setCopied(false);
+  };
+
+  // ── Render ────────────────────────────────────────────────────────────────
+  const hasErrors = clientErrors.length > 0 || serverError;
+  const canGenerate = files.length > 0 && !loading;
+
+  return (
+    <>
+      <header className="app-header">
+        <div className="header-inner">
+          <a href="/" className="brand">
+            <span className="mark"></span>
+            <span className="brand-text">Mary Kay</span>
+            <span className="brand-divider">·</span>
+            <span>3PL Evaluation</span>
+          </a>
+          <nav className="app-nav">
+            <a href="/" className="nav-link">Evaluation Framework</a>
+            <a href="/photo-converter.html" className="nav-link active">Photo Converter</a>
+          </nav>
+        </div>
+      </header>
+
+      <main>
+        {/* ── Hero ──────────────────────────────────────────────────────── */}
+        <div className="hero">
+          <p className="eyebrow hero-eyebrow">Format Sheet Converter</p>
+          <h1>Photo to <em>Parable</em><br />Instructions</h1>
+          <p>
+            Upload photos of paper format sheets. The converter reads every field,
+            table, checkbox, and handwritten note, then produces clean copy-and-paste
+            instructions you can paste directly into Parable.
+          </p>
+        </div>
+
+        {!generated ? (
+          /* ── Upload & generate form ────────────────────────────────────── */
+          <div className="card-elevated stack-lg">
+
+            {/* ── Drop zone ──────────────────────────────────────────────── */}
+            <div>
+              <div
+                className={`upload-zone${dragActive ? ' drag-active' : ''}`}
+                onDragEnter={handleDragEnter}
+                onDragLeave={handleDragLeave}
+                onDragOver={handleDragOver}
+                onDrop={handleDrop}
+                onClick={openFilePicker}
+                role="button"
+                tabIndex={0}
+                aria-label="Upload images by clicking or dragging and dropping"
+                onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') openFilePicker(); }}
+              >
+                <span className="upload-icon" aria-hidden="true">📷</span>
+                <p className="upload-hint">
+                  {dragActive ? 'Drop images here' : 'Drag photos here, or click to browse'}
+                </p>
+                <p className="upload-limits">
+                  JPEG · PNG · WebP &nbsp;·&nbsp; Max 10 MB per file &nbsp;·&nbsp; Up to {MAX_FILES} files
+                </p>
+                <button
+                  className="btn btn-outline"
+                  style={{ marginTop: 8, pointerEvents: 'none' }}
+                  tabIndex={-1}
+                  aria-hidden="true"
+                >
+                  Browse Files
+                </button>
+                <input
+                  ref={fileInputRef}
+                  type="file"
+                  accept={ALLOWED_EXTS}
+                  multiple
+                  style={{ display: 'none' }}
+                  onChange={handleFileInput}
+                  aria-hidden="true"
+                />
+              </div>
+
+              {/* ── File list ────────────────────────────────────────────── */}
+              {files.length > 0 && (
+                <>
+                  <div className="file-list" role="list" aria-label="Uploaded files">
+                    {files.map((f, i) => (
+                      <div key={f.id} className="file-item" role="listitem">
+                        <span className="file-order" aria-label={`Image ${i + 1}`}>{i + 1}</span>
+                        <img
+                          className="file-thumb"
+                          src={f.previewUrl}
+                          alt={`Preview of ${f.name}`}
+                          loading="lazy"
+                        />
+                        <div className="file-meta">
+                          <span className="file-name" title={f.name}>{f.name}</span>
+                          <span className="file-size">{f.sizeStr}</span>
+                        </div>
+                        <button
+                          className="remove-btn"
+                          onClick={() => removeFile(f.id)}
+                          aria-label={`Remove ${f.name}`}
+                          title="Remove"
+                        >
+                          ✕
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+
+                  {files.length < MAX_FILES && (
+                    <div className="add-more-row">
+                      <button className="btn btn-ghost" style={{ paddingLeft: 0 }} onClick={openAddMorePicker}>
+                        + Add more images
+                      </button>
+                      <span className="file-count-badge">{files.length} / {MAX_FILES} images</span>
+                      <input
+                        ref={addMoreInputRef}
+                        type="file"
+                        accept={ALLOWED_EXTS}
+                        multiple
+                        style={{ display: 'none' }}
+                        onChange={handleFileInput}
+                        aria-hidden="true"
+                      />
+                    </div>
+                  )}
+                </>
+              )}
+            </div>
+
+            {/* ── Context notes ────────────────────────────────────────────── */}
+            <label className="field">
+              Context notes
+              <span className="help">
+                Optional — describe the sheet type or language to improve extraction accuracy.
+                e.g. "Daily warehouse receiving log. Some fields are in Spanish."
+              </span>
+              <textarea
+                className="txt"
+                value={context}
+                onChange={(e) => setContext(e.target.value)}
+                placeholder="Add notes about this format sheet…"
+                rows={3}
+                maxLength={1000}
+              />
+            </label>
+
+            {/* ── Errors ────────────────────────────────────────────────────── */}
+            {clientErrors.length > 0 && (
+              <div className="alert alert-error" role="alert">
+                <strong>Could not add {clientErrors.length > 1 ? 'some files' : 'file'}</strong>
+                <ul>
+                  {clientErrors.map((e, i) => <li key={i}>{e}</li>)}
+                </ul>
+              </div>
+            )}
+
+            {serverError && (
+              <div className="alert alert-error" role="alert">
+                <strong>Error</strong> — {serverError}
+              </div>
+            )}
+
+            {/* ── Generate button ────────────────────────────────────────── */}
+            <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
+              <button
+                className="btn btn-rose btn-large"
+                disabled={!canGenerate}
+                onClick={handleGenerate}
+                aria-busy={loading}
+              >
+                {loading ? (
+                  <span className="row" style={{ gap: 10, justifyContent: 'center' }}>
+                    <span className="spinner" aria-hidden="true"></span>
+                    Processing…
+                  </span>
+                ) : (
+                  files.length === 0
+                    ? 'Upload images to generate'
+                    : `Generate Instructions${files.length > 1 ? ` (${files.length} images)` : ''}`
+                )}
+              </button>
+            </div>
+
+          </div>
+        ) : (
+          /* ── Result section ────────────────────────────────────────────── */
+          <div className="stack-lg">
+
+            {/* ── Warnings ──────────────────────────────────────────────── */}
+            {warnings.length > 0 && (
+              <div className="alert alert-warning" role="status">
+                <strong>Heads up</strong>
+                <ul>
+                  {warnings.map((w, i) => <li key={i}>{w}</li>)}
+                </ul>
+              </div>
+            )}
+
+            {/* ── Output card ───────────────────────────────────────────── */}
+            <div className="card-elevated">
+              <div className="output-header">
+                <div>
+                  <h3 style={{ fontSize: 22, marginBottom: 4 }}>Generated Instructions</h3>
+                  <p className="small">
+                    Edit as needed, then click Copy and paste into Parable.
+                  </p>
+                </div>
+                <button
+                  className={`btn ${copied ? 'btn-success' : 'btn-primary'}`}
+                  onClick={handleCopy}
+                  aria-live="polite"
+                  style={{ flexShrink: 0 }}
+                >
+                  {copied ? '✓ Copied!' : 'Copy Instructions'}
+                </button>
+              </div>
+
+              <textarea
+                className="txt output-textarea"
+                value={instructions}
+                onChange={(e) => setInstructions(e.target.value)}
+                aria-label="Generated Parable instructions — edit before copying"
+                spellCheck={false}
+              />
+
+              <div style={{ marginTop: 12, display: 'flex', justifyContent: 'flex-end' }}>
+                <button
+                  className={`btn ${copied ? 'btn-success' : 'btn-primary'}`}
+                  onClick={handleCopy}
+                  aria-live="polite"
+                >
+                  {copied ? '✓ Copied!' : 'Copy Instructions'}
+                </button>
+              </div>
+            </div>
+
+            {/* ── Back ──────────────────────────────────────────────────── */}
+            <div>
+              <button className="btn btn-ghost" onClick={handleReset} style={{ paddingLeft: 0 }}>
+                ← Convert another sheet
+              </button>
+            </div>
+
+          </div>
+        )}
+      </main>
+    </>
+  );
+}
+
+// ── Mount ─────────────────────────────────────────────────────────────────────
+const root = ReactDOM.createRoot(document.getElementById('root'));
+root.render(<PhotoParableConverter />);
+</script>
+</body>
+</html>
