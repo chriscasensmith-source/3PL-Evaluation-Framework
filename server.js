@@ -61,7 +61,7 @@ app.post(
   },
   async (req, res) => {
     const files = /** @type {import('multer').File[]} */ (req.files || []);
-    const context = typeof req.body.context === 'string' ? req.body.context.trim() : '';
+    const context = typeof req.body?.context === 'string' ? req.body.context.trim() : '';
 
     // ── Client-side re-validation (type + count + size) ──────────────────────
     const validation = validateUploadedFiles(files);
