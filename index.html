@@ -81,7 +81,7 @@
   .brand-text { font-style: italic; font-weight: 400; }
   .brand-divider { color: var(--whisper); font-style: normal; font-weight: 300; margin: 0 6px; }
 
-  nav.app-nav { display: flex; gap: 28px; }
+  nav.app-nav { display: flex; gap: 28px; align-items: center; }
   nav.app-nav button {
     background: none; border: none;
     font-family: inherit; font-size: 14px; font-weight: 500;
@@ -96,6 +96,13 @@
     background: var(--rose);
   }
   nav.app-nav button:hover { color: var(--ink); }
+  nav.app-nav a.nav-ext {
+    font-family: inherit; font-size: 14px; font-weight: 500;
+    color: var(--slate); text-decoration: none;
+    padding: 8px 0; position: relative;
+    transition: color 200ms;
+  }
+  nav.app-nav a.nav-ext:hover { color: var(--ink); }
 
   /* ======== Layout ======== */
   main { max-width: 1280px; margin: 0 auto; padding: 48px 32px; }
@@ -2082,6 +2089,7 @@ function App() {
             <button className={view === 'home' ? 'active' : ''} onClick={onHome}>Home</button>
             <button className={view === 'supplier' ? 'active' : ''} onClick={() => setView('supplier')}>Supplier portal</button>
             <button onClick={() => window.print()}>Print</button>
+            <a href="/photo-converter.html" className="nav-ext">Photo Converter</a>
           </nav>
         </div>
       </header>
